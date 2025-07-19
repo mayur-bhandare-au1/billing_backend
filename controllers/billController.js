@@ -106,6 +106,7 @@ exports.generateInvoicePdf = async (req, res, next) => {
         }
 
         const pdfBuffer = generateInvoicePDF(bill, bill.customer, bill.subscription.plan);
+        
 
         res.setHeader('Content-Type', 'application/pdf');
         res.setHeader('Content-Disposition', `attachment; filename=Invoice_${bill.invoiceNumber}.pdf`);

@@ -1,6 +1,7 @@
 const Payment = require('../models/Payment');
 const Bill = require('../models/Bill');
 const Customer = require('../models/Customer');
+const axios = require('axios');
 
 // @desc    Record a payment for a bill
 exports.recordPayment = async (req, res, next) => {
@@ -58,6 +59,19 @@ exports.recordPayment = async (req, res, next) => {
                 remainingDue: (bill.currentBalance - bill.paidAmount).toFixed(2)
             }
         });
+        // Send WhatsApp notification
+
+        const whatsappMessage = `Dear ${customer.name},\n\nThank you for your payment of ₹${amountPaid.toFixed(2)} towards your bill (Invoice: ${bill.invoiceNumber}). Your remaining balance is ₹${(bill.currentBalance - bill.paidAmount).toFixed(2)}.\n\nRegards,\nCable Billing Team`;
+
+        try {
+            await axios.post('https://api.whatsapp.com/send', {
+            phone: customer.phone, // Customer's phone number
+            message: whatsappMessage
+            });
+            console.log('WhatsApp notification sent successfully');
+        } catch (error) {
+            console.error('Failed to send WhatsApp notification:', error.message);
+        }
     } catch (error) {
         next(error);
     }

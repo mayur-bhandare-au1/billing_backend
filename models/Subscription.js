@@ -20,8 +20,8 @@ const SubscriptionSchema = new mongoose.Schema({
         type: Date
     },
     priceAtSubscription: { // Store price to handle plan price changes
-        type: Number,
-        required: true
+        type: Number
+        //required: true
     },
     isActive: { // Set to false if plan is changed or customer deactivated
         type: Boolean,
@@ -33,6 +33,8 @@ const SubscriptionSchema = new mongoose.Schema({
 SubscriptionSchema.pre('save', async function(next) {
     if (this.isNew || this.isModified('plan')) {
         const plan = await mongoose.model('Plan').findById(this.plan);
+
+        console.log('Plan found:', plan);
         if (plan) {
             const startDate = this.startDate || new Date();
             this.endDate = new Date(startDate.getTime() + plan.duration * 24 * 60 * 60 * 1000); // Add duration days

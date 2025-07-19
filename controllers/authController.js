@@ -18,10 +18,17 @@ exports.registerUser = async (req, res, next) => {
     if (!['admin', 'collection_agent'].includes(role)) {
         return res.status(400).json({ message: 'Invalid role specified' });
     }
-
+     //console.log('Registering user:', { username, email, phone,role });
     try {
-        const userExists = await User.findOne({ $or: [{ username }, { email, email: { $ne: null } }, { phone, phone: { $ne: null } }] });
-
+        const userExists = await User.findOne({ 
+            $or: [
+                { username }, 
+                { email: email || null }, 
+                { phone: phone || null }
+            ],
+            role
+        });
+       // console.log('User exists:', userExists);
         if (userExists) {
             return res.status(400).json({ message: 'User with this username, email or phone already exists' });
         }

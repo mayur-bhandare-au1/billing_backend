@@ -39,7 +39,7 @@ exports.assignPlanToCustomer = async (req, res, next) => {
             startDate: newStartDate,
             
         });
-
+       console.log(newSubscription);
         await newSubscription.save();
         res.status(201).json({
             message: 'Plan assigned successfully',
